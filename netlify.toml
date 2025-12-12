@@ -1,0 +1,19 @@
+[build]
+  # No build command needed (static site)
+  command = ""
+  
+  # Publish dari folder frontend
+  publish = "frontend"
+  
+  # Ignore Python files
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)frontend/'"
+
+[[redirects]]
+  # SPA fallback (optional, untuk routing)
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  # No Python needed
+  NODE_VERSION = "18"
