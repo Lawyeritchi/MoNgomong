@@ -19,7 +19,20 @@ from pathlib import Path
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+
+# CORS configuration for production
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+            "https://*.netlify.app",
+            "https://*.vercel.app"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Global variables untuk models
 model_letter = None

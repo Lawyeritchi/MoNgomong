@@ -9,7 +9,7 @@ const getAPIBaseURL = () => {
     
     // Production: Set your Railway/Render URL here after deployment
     // Example: 'https://your-app-name.up.railway.app'
-    return 'https://your-backend-url.railway.app';  // ⚠️ GANTI INI SETELAH DEPLOY!
+    return 'https://web-production-54744.up.railway.app/';  // ⚠️ GANTI INI SETELAH DEPLOY!
 };
 
 const CONFIG = {
