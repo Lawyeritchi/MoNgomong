@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MoNgomong</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon"></span>
+                <span class="logo-text">MoNgomong</span>
+            </div>
+            <nav class="nav">
+                <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Status Bar
+            <div class="status-bar" id="statusBar">
+                <div class="status-item">
+                    <span class="status-label">API:</span>
+                    <span class="status-value" id="apiStatus">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Camera:</span>
+                    <span class="status-value" id="cameraStatus">Not Started</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Detection:</span>
+                    <span class="status-value" id="detectionStatus">Inactive</span>
+                </div>
+            </div> -->
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="letter">
+                        <span class="mode-icon">🔤</span>
+                        <span>Huruf</span>
+                    </button>
+                    <button class="mode-btn" data-mode="word">
+                        <span class="mode-icon">📝</span>
+                        <span>Kata</span>
+                    </button>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" id="startBtn">
+                        <span class="btn-icon">📹</span>
+                        <span>Start Camera</span>
+                    </button>
+                    
+                    <button class="btn btn-success" id="detectBtn" disabled>
+                        <span class="btn-icon">🎯</span>
+                        <span>Start Detection</span>
+                    </button>
+                    
+                    <button class="btn btn-danger" id="stopBtn" disabled>
+                        <span class="btn-icon">⏹️</span>
+                        <span>Stop</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video & Results Section -->
+            <div class="content-grid">
+                
+                <!-- Video Section -->
+                <div class="video-section">
+                    <div class="video-container">
+                        <video id="videoElement" autoplay playsinline></video>
+                        <canvas id="canvasElement"></canvas>
+                        
+                        <div class="video-overlay" id="videoOverlay">
+                            <div class="overlay-content">
+                                <span class="overlay-icon">📹</span>
+                                <h3>Camera belum aktif</h3>
+                                <p>Klik "Start Camera" untuk memulai</p>
+                            </div>
+                        </div>
+
+                        <div class="fps-counter" id="fpsCounter">0 FPS</div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section">
+                    
+                    <!-- Current Prediction -->
+                    <div class="prediction-card">
+                        <h3 class="card-title">Hasil Deteksi</h3>
+                        <div class="prediction-display">
+                            <div class="prediction-letter" id="predictionLetter">-</div>
+                            <div class="prediction-confidence">
+                                <span class="confidence-label">Confidence:</span>
+                                <span class="confidence-value" id="confidenceValue">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Translation Output -->
+                    <div class="translation-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Terjemahan</h3>
+                            <button class="btn-icon btn-clear" id="clearBtn" title="Clear">
+                                <span>🗑️</span>
+                            </button>
+                        </div>
+                        <div class="translation-text" id="translationText">
+                            <div class="empty-state">Belum ada terjemahan</div>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div class="history-card">
+                        <h3 class="card-title">Riwayat (5 terakhir)</h3>
+                        <div class="history-list" id="historyList">
+                            <div class="empty-state">Belum ada riwayat</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <h3>📝 Cara Penggunaan:</h3>
+                <ol>
+                    <li>Klik <strong>"Start Camera"</strong> untuk mengaktifkan kamera</li>
+                    <li>Berikan izin akses kamera saat diminta</li>
+                    <li>Klik <strong>"Start Detection"</strong> untuk mulai deteksi</li>
+                    <li>Buat gesture BISINDO di depan kamera</li>
+                    <li>Sistem akan otomatis mendeteksi dan menerjemahkan</li>
+                </ol>
+                
+                <div class="tips">
+                    <h4>💡 Tips:</h4>
+                    <ul>
+                        <li>Pastikan pencahayaan cukup terang</li>
+                        <li>Posisikan tangan di area kamera dengan jelas</li>
+                        <li>Background sebaiknya polos untuk hasil lebih akurat</li>
+                        <li>Tahan gesture 1-2 detik untuk deteksi yang lebih stabil</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>MoNgomong</p>
+            <p class="footer-note">Built with Claude AI</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/mediapipe.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
